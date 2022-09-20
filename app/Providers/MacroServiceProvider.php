@@ -2,30 +2,29 @@
 
 namespace App\Providers;
 
+use App\Macros\ResponseMacro;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Response;
 
-class AppServiceProvider extends ServiceProvider
+class MacroServiceProvider extends ServiceProvider
 {
     /**
-     * Register any application services.
+     * Register services.
      *
      * @return void
      */
     public function register()
     {
-        //
+        Response::mixin(new ResponseMacro());
     }
 
     /**
-     * Bootstrap any application services.
+     * Bootstrap services.
      *
      * @return void
      */
     public function boot()
     {
-        Response::macro('caps', function ($value) {
-            return Response::make(strtoupper($value));
-        });
+        //
     }
 }
