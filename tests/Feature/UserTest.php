@@ -10,16 +10,15 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class UserTest extends TestCase
 {
-    use DatabaseMigrations;
     use RefreshDatabase;
     /**
      * A basic feature test example.
      *
      * @return void
      */
-    public function test_creating_a_new_client_user()
+    public function test_creating_a_new_user()
     {
-        $response = $this->postJson('/api/v1/auth/signup', [
+        $user = [
             "first_name" => "Demetrius",
             "last_name" => "Lewis",
             "password" => "test1234",
@@ -27,8 +26,12 @@ class UserTest extends TestCase
             "email" => "client@test.com",
             "type" => "client",
             "is_admin" => false
-        ]);
+        ];
 
-        $response->assertStatus(201);
+        $this->postJson('/api/v1/auth/signup', $user)->assertStatus(201);
+
+        // There is no password_confirmation field in database.
+        unset($user['password_confirmation']);
+        $this->assertDatabaseHas('users', $user);
     }
 }

@@ -9,6 +9,8 @@ use App\Macros\ResponseMacro;
 use App\Services\UserService;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Models\User;
+use App\Models\Role;
 
 class RegisterController extends Controller
 {
@@ -18,22 +20,21 @@ class RegisterController extends Controller
     public function store(StoreRequest $request): JsonResponse
     {
         try {
-            $request->mergeIfMissing([
-                'type' => 'client',
-                'is_admin' => false
-            ]);
 
-            $user = $this->userService->create($request->validated());
+            $role = Role::firstWhere('name', $request->type ?? 'client');
+
+            $user = User::create($request->validated());
 
             $token = $user->createToken('banking');
+
+            $role->users()->attach($user);
 
             $user = $this->userService->append_token_to_user($user, $token);
 
             return response()->success($user, 201);
         } catch(Exception $e) {
-            return response()->errorResponse([
-                "message" => "failed to create new user"
-            ], 401);
+            report($e);
+            return response()->errorResponse("failed to create new user", 401);
         }
     }
 }
