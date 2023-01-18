@@ -14,13 +14,13 @@ class RegisterController extends Controller
     /**
      * Summary of store
      * @param Request $request
-     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @return \Illuminate\Http\Response
      */
     public function store(Request $request) : Response
     {
         $request->validate([
             'email' => 'required|string|unique:users,email',
-            'password' => 'required|string',
+            'password' => 'required|string|confirmed',
             'firstName' => 'required|string',
             'lastName' => 'required|string',
             'type' => ['required', 'string', Rule::in(['client', 'staff'])],
@@ -35,7 +35,7 @@ class RegisterController extends Controller
         $token = $user->createToken('bankapi')->plainTextToken;
 
         return response([
-            'status' => "201",
+            'status' => 201,
             'data' => array_merge($user->toArray(), ['token' => $token])
         ], 201);
     }
