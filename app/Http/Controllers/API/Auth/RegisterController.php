@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\API\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
+
 
 class RegisterController extends Controller
 {
@@ -16,17 +17,8 @@ class RegisterController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) : Response
+    public function store(RegisterRequest $request) : Response
     {
-        $request->validate([
-            'email' => 'required|string|unique:users,email',
-            'password' => 'required|string|confirmed',
-            'firstName' => 'required|string',
-            'lastName' => 'required|string',
-            'type' => ['required', 'string', Rule::in(['client', 'staff'])],
-            'isAdmin' => 'required|boolean'
-        ]);
-
         // Hash the user password before saving to the database
         $request['password'] = Hash::make($request['password']);
 
