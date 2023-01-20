@@ -5,9 +5,11 @@ namespace App\Http\Controllers\API\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
+use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
+use Symfony\Component\HttpFoundation\Response;
 
 
 class RegisterController extends Controller
@@ -17,18 +19,26 @@ class RegisterController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(RegisterRequest $request) : Response
+    public function store(RegisterRequest $request) : JsonResponse
     {
-        // Hash the user password before saving to the database
-        $request['password'] = Hash::make($request['password']);
+        try {
+            // Hash the user password before saving to the database
+            $request['password'] = Hash::make($request['password']);
 
-        $user = User::create($request->all());
+            $user = User::create($request->all());
 
-        $token = $user->createToken('bankapi')->plainTextToken;
+            $token = $user->createToken('bankapi')->plainTextToken;
 
-        return response([
-            'status' => 201,
-            'data' => array_merge($user->toArray(), ['token' => $token])
-        ], 201);
+            return response()->json([
+                'status' => Response::HTTP_CREATED,
+                'data' => array_merge($user->toArray(), ['token' => $token])
+            ], Response::HTTP_CREATED);
+        } catch(Exception $e) {
+            return response()->json([
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                'error' => 'User can not be created'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
     }
 }
