@@ -10,7 +10,7 @@ use Tests\TestCase;
 
 class RegisterControllerTest extends TestCase
 {
-    use RefreshDatabase, DatabaseMigrations;
+    use RefreshDatabase;
 
     protected string $register_route;
 
