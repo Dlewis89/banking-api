@@ -1,6 +1,8 @@
 # Bank API
 backend api for a bank application.
 
+[![Laravel](https://github.com/Dlewis89/banking-api/actions/workflows/laravel.yml/badge.svg?branch=master)](https://github.com/Dlewis89/banking-api/actions/workflows/laravel.yml)
+
 ## Technologies
 - Laravel
 - Sanctum
